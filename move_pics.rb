@@ -1,30 +1,25 @@
 require 'exifr'
 require 'fileutils'
 
-def create_dir_and_move (imgFileDate, i)
-		dateString = imgFileDate.year.to_s + "_" + sprintf("%02d", imgFileDate.month)
-		puts i +"  >>  "+ dateString
-		if !File.directory? dateString
-			Dir.mkdir dateString 
-			puts "created dir "+dateString 
-		end
-		FileUtils.mv(i, dateString+"/"+i)
-end
-
-
-basedir = '.'
-files = Dir.glob("*.{jpg,JPG}")
-
-for i in files do
-	imgFileDate = EXIFR::JPEG.new(i).date_time
+for imgFile in Dir.glob("*.{jpg,JPG}") do
+	# try exi date first
+	imgFileDate = EXIFR::JPEG.new(imgFile).date_time
+	# then filedate
+  imgFileDate ||=	File.new(imgFile).mtime
 	if imgFileDate
-		create_dir_and_move imgFileDate, i 
+		create_dir_and_move(imgFileDate, imgFile) 
 	else
-		imgFileDate = File.new(i).mtime
-		if imgFileDate
-			create_dir_and_move imgFileDate, i 
-		else
-	  	puts "not date in "+i
-		end
+	  puts "not date in #{imgFile}"
 	end
 end
+
+def create_dir_and_move (imgFileDate, imgFile)
+		dateString = imgFileDate.year.to_s + "_" + sprintf("%02d", imgFileDate.month)
+		unless File.directory? dateString
+			Dir.mkdir dateString 
+			puts "created dir #{dateString}" 
+		end
+		puts "#{imgFile}  >>  #{dateString}"
+		FileUtils.mv(imgFile, dateString+"/"+imgFile)
+end
+
