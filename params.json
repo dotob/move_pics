@@ -1,0 +1,1 @@
+{"name":"move pics","body":"moves all jpg|JPG images in the current directory into folders named year_month (like \"2012_04\"). using the date of the exif data or the filedate.","tagline":"small ruby script to move images into year_month folders","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
