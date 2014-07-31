@@ -65,7 +65,7 @@ end
 def move_but_do_not_override (imgFile, destination)
   i = 0
   if File.exists?(destination)
-    puts "#{imgFile}  NOT MOVED, WOULD OVERRIDE #{@msg}"
+    puts "#{imgFile}  NOT MOVED TO #{destination}, WOULD OVERRIDE #{@msg}"
   else
     puts "#{imgFile}  >>  #{destination} #{@msg}"
     FileUtils.mv(imgFile, destination) if !@just_fake_it
