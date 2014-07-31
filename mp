@@ -4,6 +4,7 @@ require 'rubygems'
 require 'commander/import'
 require 'exifr'
 require 'fileutils'
+require 'awesome_print'
 
 program :version, '0.0.1'
 program :description, 'moves pictures by exif/file date into yyyy-mm directories'
@@ -17,18 +18,20 @@ command :move_pics do |c|
   c.example 'description', 'command example'
   c.option '--fake', 'just fake moving but tell what would be done'
   c.action do |args, options|
+    @just_fake_it = options.fake
     @msg = options.fake ? " >> HEY, I AM JUST FAKING!!" : ""
     doit
   end
 end
 
 def doit
-  files = Dir.glob("*.{jpg,JPG}")
-  if file.any?
+  files = Dir.glob("*.{jpg,JPG,jpeg}")
+  ap files
+  if files.any?
     puts "work on #{files.length} files"
     i = 0
     for imgFile in files do
-      # try exi date first
+      # try exif date first
       imgFileDate = EXIFR::JPEG.new(imgFile).date_time
       # then filedate
       imgFileDate ||= File.new(imgFile).mtime
@@ -53,6 +56,8 @@ def create_dir_and_move (imgFileDate, imgFile)
       puts "created dir #{dateString} #{@msg}" 
     end
     i = move_but_do_not_override(imgFile, dateString+"/"+imgFile)
+  else
+    puts "image file date was no date: >#{imgFileDate}<, #{imgFileDate.class}"
   end
   i
 end
